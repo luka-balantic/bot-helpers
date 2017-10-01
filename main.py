@@ -35,6 +35,7 @@ def initBrowser(browser, options={}, headless=False):
         dcap["phantomjs.page.settings.userAgent"] = (agents)
         driver = webdriver.PhantomJS(phantomJSpath, desired_capabilities=dcap)
         driver.set_window_size(windowSize)
+        return driver
 
     # Firefox
     if browser == 'firefox':
