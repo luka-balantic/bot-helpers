@@ -218,4 +218,4 @@ def loginFacebook(driver, username, password):
     driver.get("https://www.facebook.com")
     useElement(driver, 'xpath', '//*[@id="email"]', True).send_keys(username)
     useElement(driver, 'xpath', '//*[@id="pass"]', True).send_keys(password)
-    useElement(driver, 'xpath', '//*[@id="loginbutton"]/input]', True).click()
+    useElement(driver, 'id', 'loginbutton', True).click()
