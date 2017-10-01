@@ -19,10 +19,9 @@ def withDefault(options, keyword, default):
 #       - injectExtention -> Defines if custom extention should be injected || Default = False
 #       - agents -> Defines 'agents' || Default = 'Mozilla/5.0 (Windows NT x.y; rv:10.0) Gecko/20100101 Firefox/10.0'
 #       - windowSize -> Defines window size || Default = '1024,860'
-#   - headless -> Defines if driver should be running in headless mode or not || Default = False
 # Returns:
 #   - driver
-def initBrowser(browser, options={}, headless=False):
+def initBrowser(browser, options={}):
     injectExtention = withDefault(options, 'injectExtention', False)
     agents = withDefault(options, 'agents', 'Mozilla/5.0 (Windows NT x.y; rv:10.0) Gecko/20100101 Firefox/10.0')
     windowSize = withDefault(options, 'windowSize', '1024,860')
@@ -30,7 +29,7 @@ def initBrowser(browser, options={}, headless=False):
     phantomJSpath = withDefault(options, 'phantomJSpath', '')
 
     # Headless
-    if headless:
+    if browser == 'headless':
         dcap = dict(DesiredCapabilities.PHANTOMJS)
         dcap["phantomjs.page.settings.userAgent"] = (agents)
         driver = webdriver.PhantomJS(phantomJSpath, desired_capabilities=dcap)
