@@ -21,10 +21,19 @@ def withDefault(options, keyword, default):
 #       - windowSize -> Defines window size || Default = '1024,860'
 # Returns:
 #   - driver
-def initBrowser(browser, options={}):
+def initBrowser(browser, options={}, headless=False):
     injectExtention = withDefault(options, 'injectExtention', False)
     agents = withDefault(options, 'agents', 'Mozilla/5.0 (Windows NT x.y; rv:10.0) Gecko/20100101 Firefox/10.0')
     windowSize = withDefault(options, 'windowSize', '1024,860')
+    DesiredCapabilities = withDefault(options, 'DesiredCapabilities', '')
+    phantomJSpath = withDefault(options, 'phantomJSpath', '')
+
+    # Headless
+    if headless:
+        dcap = dict(DesiredCapabilities.PHANTOMJS)
+        dcap["phantomjs.page.settings.userAgent"] = (agents)
+        driver = webdriver.PhantomJS(config.phantomJSpath, desired_capabilities=dcap)
+        driver.set_window_size(windowSize)
 
     # Firefox
     if browser == 'firefox':
