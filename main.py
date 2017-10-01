@@ -216,6 +216,6 @@ def sendMail(content='Bot notification', options={}):
 #   - undefined
 def loginFacebook(driver, username, password):
     driver.get("https://www.facebook.com")
-    driver.find_element_by_xpath('//*[@id="email"]').send_keys(username)
-    driver.find_element_by_xpath('//*[@id="pass"]').send_keys(password)
-    driver.find_element_by_xpath('//*[@id="u_0_5"]').click()
+    useElement(driver, 'xpath', '//*[@id="email"]', True).send_keys(username)
+    useElement(driver, 'xpath', '//*[@id="pass"]', True).send_keys(password)
+    useElement(driver, 'xpath', '//*[@id="loginbutton"]/input]', True).click()
