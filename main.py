@@ -207,3 +207,15 @@ def sendMail(content='Bot notification', options={}):
     except Exception as error:
         print(error)
         print("failed to send mail")
+
+# Arguments:
+#   - driver
+#   - username
+#   - password
+# Returns:
+#   - undefined
+def loginFacebook(driver, username, password):
+    driver.get("https://www.facebook.com")
+    driver.find_element_by_xpath('//*[@id="email"]').send_keys(username)
+    driver.find_element_by_xpath('//*[@id="pass"]').send_keys(password)
+    driver.find_element_by_xpath('//*[@id="u_0_5"]').click()
