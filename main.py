@@ -78,6 +78,13 @@ def injectIdToElement(driver, jquerySelector, id):
 	driver.execute_script("window.jQuery('{0}').attr('id', '{1}');".format(jquerySelector, id))
 
 # Arguments:
+#   - driver
+#   - jquerySelector
+#   - target
+def changeLinkTarget(driver, jquerySelector, target):
+	driver.execute_script("window.jQuery('{0}').setAttribute('target', '{1}');".format(jquerySelector, target))
+
+# Arguments:
 #   - element
 #   - elementName
 def downloadElement(element, elementName):
