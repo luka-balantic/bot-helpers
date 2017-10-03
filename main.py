@@ -187,8 +187,8 @@ def buildScreenshotWithTimestamp(driver, options={}):
 #   - undefined
 def sendMail(content='Bot notification', options={}):
     #destruct options
-    FROM = withDefault(options, 'from', '')
-    TO = withDefault(options, 'to', '')
+    FROM = withDefault(options, 'from', 'bots@gmail.com')
+    TO = withDefault(os.environ, 'MAIL_RECEIVER', '')
     SUBJECT = withDefault(options, 'to', 'Bot notification')
     CONTENT = content
     mail_username = withDefault(os.environ, 'MAIL_USERNAME', '')
