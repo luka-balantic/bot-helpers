@@ -1,5 +1,6 @@
 import datetime
 import emails
+import os
 
 from selenium import webdriver
 from random import *
@@ -190,8 +191,8 @@ def sendMail(content='Bot notification', options={}):
     TO = withDefault(options, 'to', '')
     SUBJECT = withDefault(options, 'to', 'Bot notification')
     CONTENT = content
-    mail_username = withDefault(options, 'mail_username', '')
-    mail_password = withDefault(options, 'mail_password', '')
+    mail_username = withDefault(os.environ, 'MAIL_USERNAME', '')
+    mail_password = withDefault(os.environ, 'MAIL_PASSWORD', '')
     debugScreenshot = withDefault(options, 'debugScreenshot', False)
     driver = withDefault(options, 'driverForScreenshot', '')
 
