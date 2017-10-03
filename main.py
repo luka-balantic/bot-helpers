@@ -1,12 +1,14 @@
 import datetime
 import emails
 import os
+import timeit
 
 from selenium import webdriver
 from random import *
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+
 
 def withDefault(options, keyword, default):
     try:
@@ -237,3 +239,10 @@ def loginFacebook(driver, username, password):
     useElement(driver, 'xpath', '//*[@id="email"]', True).send_keys(username)
     useElement(driver, 'xpath', '//*[@id="pass"]', True).send_keys(password)
     useElement(driver, 'id', 'loginbutton', True).click()
+
+# Arguments:
+#   - start_time
+# Returns:
+#   - Number of seconds passed
+def secondsPassed(start_time):
+    return timeit.default_timer() - start_time
