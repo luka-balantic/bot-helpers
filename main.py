@@ -2,13 +2,14 @@ import datetime
 import emails
 import os
 import timeit
+import time
+import urllib.request
 
 from selenium import webdriver
 from random import *
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
-
 
 def withDefault(options, keyword, default):
     try:
@@ -25,43 +26,58 @@ def withDefault(options, keyword, default):
 # Returns:
 #   - driver
 def initBrowser(browser, options={}):
+    # @todo add proxy
+    proxyIp = ""
+    proxyPort = 0000
+
     injectExtention = withDefault(options, 'injectExtention', False)
-    agents = withDefault(options, 'agents', 'Mozilla/5.0 (Windows NT x.y; rv:10.0) Gecko/20100101 Firefox/10.0')
+    agents = withDefault(options, 'agents', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:56.0) Gecko/20100101 Firefox/56.0')
     windowSize = withDefault(options, 'windowSize', '1024,860')
-    DesiredCapabilities = withDefault(options, 'DesiredCapabilities', '')
     phantomJSpath = withDefault(options, 'phantomJSpath', '')
 
     # Headless
     if browser == 'headless':
+#         service_args = [
+#             '--proxy={0}:{1}'.format(proxyIp, proxyPort),
+#             '--proxy-type=https',
+#             '--ignore-ssl-errors=true',
+#             '--web-security=false'
+#             ]
+
         dcap = dict(DesiredCapabilities.PHANTOMJS)
         dcap["phantomjs.page.settings.userAgent"] = (agents)
-        driver = webdriver.PhantomJS(phantomJSpath, desired_capabilities=dcap)
-        driver.set_window_size(1024,860)
+        driver = webdriver.PhantomJS(
+            phantomJSpath,
+            desired_capabilities=dcap
+#             service_args=service_args
+        )
+        driver.set_window_size(1200,1024)
         return driver
 
     # Firefox
     if browser == 'firefox':
         profile = webdriver.FirefoxProfile()
-
+#         profile.set_preference('network.proxy.type', 1)
+#         profile.set_preference('network.proxy.http', proxyIp)
+#         profile.set_preference('network.proxy.http_port', proxyPort)
+#         profile.set_preference('network.proxy.ssl', proxyIp)
+#         profile.set_preference('network.proxy.ssl_port', proxyPort)
+#         profile.set_preference('network.proxy.share_proxy_settings', True)
+        profile.set_preference("general.useragent.override", agents)
+# #     desired_capabilities['platform'] = "WINDOWS"
+# #     desired_capabilities['version'] = "10"
         if injectExtention == True:
             profile.add_extension(extension=CONFIG['ROOT_DIR'] + "/firefox_extentions/inject-javascript")
 
         return webdriver.Firefox(profile)
 
-
-    if browser == 'chrome':
-        chrome_options = webdriver.ChromeOptions()
-
-        if injectExtention == True:
-           #chrome_options.add_argument("--load-extension=" + CONFIG['ROOT_DIR'] + "/chrome_extentions/inject-javascript")
-           pass
-
-        chrome_options.add_argument('window-size={0}'.format(windowSize))
-        chrome_options.add_argument("user-agent={0}".format(agents))
-
-        return webdriver.Chrome(
-            chrome_options=chrome_options,
-        )
+# Arguments:
+#   - driver
+#   - element
+# Returns:
+#   - element
+def scrollToElement(driver, element):
+    driver.execute_script("arguments[0].scrollIntoView();", element)
 
 # Arguments:
 #   - driver
@@ -92,7 +108,7 @@ def changeLinkTarget(driver, jquerySelector, target):
 #   - elementName
 def downloadElement(element, elementName):
     src = element.get_attribute('src')
-    urllib.urlretrieve(src, elementName)
+    urllib.request.urlretrieve(src, elementName)
     time.sleep(2)
 
 # Arguments:
@@ -102,7 +118,7 @@ def downloadElement(element, elementName):
 #   - quitOnFail -> Defines if script should quit on except || Default = False
 # Returns:
 #   - element or undefined
-def useElement(driver, method, selector, quitOnFail=False):
+def useElement(driver, method, selector, quitOnFail=False, mailData={}):
     def handleException(error):
         print('useElement failed: {0}'.format(error))
         sendMail("useElement failed: {0}".format(error), {
@@ -140,6 +156,35 @@ def useElement(driver, method, selector, quitOnFail=False):
 
 # Arguments:
 #   - driver
+#   - method
+#   - selector
+# Returns:
+#   - True or False
+def isElementPresent(driver, method, selector):
+    if method == 'xpath':
+        try:
+            element = driver.find_element_by_xpath(selector)
+            return True
+        except:
+            return False
+
+    if method == 'id':
+        try:
+            element = driver.find_element_by_id(selector)
+            return True
+        except:
+            return False
+
+    if method == 'class':
+        try:
+            element = driver.find_element_by_class(selector)
+            return True
+        except:
+            return False
+
+
+# Arguments:
+#   - driver
 #   - element
 #   - options:
 #       - shouldPrint -> Defines if coordinates of click should be printed || Default = False
@@ -150,8 +195,8 @@ def clickOnRandomSpotOnElement(driver, element, options={}):
     shouldPrint = withDefault(options, 'shouldPrint', False)
 
     actions = ActionChains(driver)
-    pointOfOffsetX = randint(1, element.size['width'])
-    pointOfOffsetY = randint(1, element.size['height'])
+    pointOfOffsetX = randint(1, int(abs(element.size['width'])))
+    pointOfOffsetY = randint(1, int(abs(element.size['height'])))
 
     if shouldPrint:
         print(pointOfOffsetX)
