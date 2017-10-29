@@ -121,12 +121,8 @@ def downloadElement(element, elementName):
 def useElement(driver, method, selector, quitOnFail=False, mailData={}):
     def handleException(error):
         print('useElement failed: {0}'.format(error))
-        sendMail("useElement failed: {0}".format(error), {
-            'mail_username': 'changeme',
-            'mail_password': 'changeme',
-            'debugScreenshot': True,
-            'driverForScreenshot': driver
-        })
+        sendMail(driver, 'Bot notification', "useElement failed: {0}".format(error), True, mailData)
+
         if quitOnFail:
             driver.close()
             quit()
@@ -222,26 +218,27 @@ def buildScreenshotWithTimestamp(driver, options={}):
     return screenshotName
 
 # Arguments:
-#   - content
+#   - driver
+#   - subject -> Subject of mail
+#   - content -> Content of mail
+#   - shouldAddDebugScreenshot -> Determines if email should contain debug screenshot
 #   - options:
-#       - from -> Defines 'from' field for email sending || Default = ''
-#       - to -> Defines 'to' field for email sending || Default = ''
-#       - subject -> Defines 'subject' field for email sending || Default = 'Bot notification'
+#       - mail_from -> Defines 'from' field for email sending || Default = 'bots@gmail.com'
+#       - mail_receiver -> Defines 'to/receiver' field for email sending || Default = ''
 #       - mail_username -> Defines username for email SMTP || Default = ''
 #       - mail_password -> Defines password for email SMTP || Default = ''
-#       - debugScreenshot -> Defines if current screenshot should be send with email || Default = False
 # Returns:
 #   - undefined
-def sendMail(content='Bot notification', options={}):
+def sendMail(driver, subject, content, shouldAddDebugScreenshot, options={}):
+    sendMail(driver, 'Bot notification', "useElement failed: {0}".format(error), True, mailData)
+
     #destruct options
-    FROM = withDefault(options, 'from', 'bots@gmail.com')
-    TO = withDefault(os.environ, 'MAIL_RECEIVER', '')
-    SUBJECT = withDefault(options, 'to', 'Bot notification')
+    FROM = withDefault(options, 'mail_from', 'bots@gmail.com')
+    TO = withDefault(options, 'mail_receiver', '')
+    SUBJECT = subject
     CONTENT = content
-    mail_username = withDefault(os.environ, 'MAIL_USERNAME', '')
-    mail_password = withDefault(os.environ, 'MAIL_PASSWORD', '')
-    debugScreenshot = withDefault(options, 'debugScreenshot', False)
-    driver = withDefault(options, 'driverForScreenshot', '')
+    USERNAME = withDefault(os.environ, 'mail_username', '')
+    PASSWORD = withDefault(os.environ, 'mail_password', '')
 
     # create html email
     html = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" '
@@ -254,7 +251,7 @@ def sendMail(content='Bot notification', options={}):
                            subject=SUBJECT,
                            mail_from=('Bot notifications', FROM))
 
-    if debugScreenshot:
+    if shouldAddDebugScreenshot:
         screenshotName = buildScreenshotWithTimestamp(driver, {
         'name': 'debugging'
         })
@@ -265,8 +262,8 @@ def sendMail(content='Bot notification', options={}):
                 smtp={'host':'smtp.gmail.com',
                 'port': 465,
                 'ssl': True,
-                'user': mail_username,
-                'password': mail_password
+                'user': USERNAME,
+                'password': PASSWORD
                 })
         print(response)
     except Exception as error:
