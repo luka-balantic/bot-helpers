@@ -230,8 +230,6 @@ def buildScreenshotWithTimestamp(driver, options={}):
 # Returns:
 #   - undefined
 def sendMail(driver, subject, content, shouldAddDebugScreenshot, options={}):
-    sendMail(driver, 'Bot notification', "useElement failed: {0}".format(error), True, mailData)
-
     #destruct options
     FROM = withDefault(options, 'mail_from', 'bots@gmail.com')
     TO = withDefault(options, 'mail_receiver', '')
