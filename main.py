@@ -235,8 +235,8 @@ def sendMail(driver, subject, content, shouldAddDebugScreenshot, options={}):
     TO = withDefault(options, 'mail_receiver', '')
     SUBJECT = subject
     CONTENT = content
-    USERNAME = withDefault(os.environ, 'mail_username', '')
-    PASSWORD = withDefault(os.environ, 'mail_password', '')
+    USERNAME = withDefault(options, 'mail_username', '')
+    PASSWORD = withDefault(options, 'mail_password', '')
 
     # create html email
     html = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" '
