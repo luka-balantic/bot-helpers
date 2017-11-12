@@ -21,8 +21,15 @@ def withDefault(options, keyword, default):
 #   - browser
 #   - options:
 #       - injectExtention -> Defines if custom extention should be injected || Default = False
-#       - agents -> Defines 'agents' || Default = 'Mozilla/5.0 (Windows NT x.y; rv:10.0) Gecko/20100101 Firefox/10.0'
+#       - agents -> Defiynes 'agents' || Default = 'Mozilla/5.0 (Windows NT x.y; rv:10.0) Gecko/20100101 Firefox/10.0'
 #       - windowSize -> Defines window size || Default = '1024,860'
+#       - phantomJSpath -> Defines path for phantomJS || Default is empty string
+#       - firefoxProfilePath -> Defines path for firefox profile || Default is empty string
+#       - shouldUseProxy -> Tells the function if proxy should be used || Default = False
+#       - proxyIp -> Defines proxy Ip || Default is empty string
+#       - proxyPort -> Defines proxy Port || Default is empty string
+#       - proxyUser -> Defines proxy User || Default is empty string
+#       - proxyPass -> Defines proxy Pass || Default is empty string
 # Returns:
 #   - driver
 def initBrowser(browser, options={}):
