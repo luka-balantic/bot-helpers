@@ -26,46 +26,48 @@ def withDefault(options, keyword, default):
 # Returns:
 #   - driver
 def initBrowser(browser, options={}):
-    # @todo add proxy
-    proxyIp = ""
-    proxyPort = 0000
-
     injectExtention = withDefault(options, 'injectExtention', False)
     agents = withDefault(options, 'agents', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:56.0) Gecko/20100101 Firefox/56.0')
     windowSize = withDefault(options, 'windowSize', '1024,860')
     phantomJSpath = withDefault(options, 'phantomJSpath', '')
+    firefoxProfilePath = withDefault(options, 'firefoxProfilePath', '')
+    shouldUseProxy = withDefault(options, 'shouldUseProxy', False)
+    proxyIp = withDefault(options, 'proxyIp', '')
+    proxyPort = withDefault(options, 'proxyPort', '')
+    proxyUser = withDefault(options, 'proxyUser', '')
+    proxyPass = withDefault(options, 'proxyPass', '')
 
     # Headless
     if browser == 'headless':
-#         service_args = [
-#             '--proxy={0}:{1}'.format(proxyIp, proxyPort),
-#             '--proxy-type=https',
-#             '--ignore-ssl-errors=true',
-#             '--web-security=false'
-#             ]
+        service_args = []
+
+        if shouldUseProxy:
+            proxy_args = [
+                '--proxy={0}:{1}'.format(proxyIp, proxyPort),
+                '--proxy-type=https',
+                '--ignore-ssl-errors=true',
+                '--web-security=false',
+                '--proxy-auth={0}:{1}'.format(proxyUser, proxyPass)
+                ]
+            service_args.extend(proxy_args)
 
         dcap = dict(DesiredCapabilities.PHANTOMJS)
         dcap["phantomjs.page.settings.userAgent"] = (agents)
+
         driver = webdriver.PhantomJS(
             phantomJSpath,
-            desired_capabilities=dcap
-#             service_args=service_args
+            desired_capabilities=dcap,
+            service_args=service_args
         )
+
         driver.set_window_size(1200,1024)
         return driver
+
 
     # Firefox
     if browser == 'firefox':
         profile = webdriver.FirefoxProfile()
-#         profile.set_preference('network.proxy.type', 1)
-#         profile.set_preference('network.proxy.http', proxyIp)
-#         profile.set_preference('network.proxy.http_port', proxyPort)
-#         profile.set_preference('network.proxy.ssl', proxyIp)
-#         profile.set_preference('network.proxy.ssl_port', proxyPort)
-#         profile.set_preference('network.proxy.share_proxy_settings', True)
         profile.set_preference("general.useragent.override", agents)
-# #     desired_capabilities['platform'] = "WINDOWS"
-# #     desired_capabilities['version'] = "10"
         if injectExtention == True:
             profile.add_extension(extension=CONFIG['ROOT_DIR'] + "/firefox_extentions/inject-javascript")
 
@@ -160,21 +162,21 @@ def isElementPresent(driver, method, selector):
     if method == 'xpath':
         try:
             element = driver.find_element_by_xpath(selector)
-            return True
+            return element.is_displayed()
         except:
             return False
 
     if method == 'id':
         try:
             element = driver.find_element_by_id(selector)
-            return True
+            return element.is_displayed()
         except:
             return False
 
     if method == 'class':
         try:
             element = driver.find_element_by_class(selector)
-            return True
+            return element.is_displayed()
         except:
             return False
 
