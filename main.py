@@ -73,7 +73,7 @@ def initBrowser(browser, options={}):
 
     # Firefox
     if browser == 'firefox':
-        profile = webdriver.FirefoxProfile()
+        profile = webdriver.FirefoxProfile(firefoxProfilePath)
         profile.set_preference("general.useragent.override", agents)
         if injectExtention == True:
             profile.add_extension(extension=CONFIG['ROOT_DIR'] + "/firefox_extentions/inject-javascript")
@@ -152,7 +152,14 @@ def useElement(driver, method, selector, quitOnFail=False, mailData={}):
 
     if method == 'class':
         try:
-            element = driver.find_element_by_class(selector)
+            element = driver.find_element_by_class_name(selector)
+            return element
+        except Exception as error:
+            handleException(error)
+
+    if method == 'name':
+        try:
+            element = driver.find_element_by_name(selector)
             return element
         except Exception as error:
             handleException(error)
